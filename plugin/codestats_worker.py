@@ -43,17 +43,18 @@ class Worker:
         next_send = datetime.now()
 
         while True:
-            command, args = self.pipe.recv()
+            if self.pipe.poll():
+                command, args = self.pipe.recv()
 
-            if command == 'xp':
-                language, xp = args
-                if language not in xps:
-                    xps[language] = 0
-                xps[language] += xp
+                if command == 'xp':
+                    language, xp = args
+                    if language not in xps:
+                        xps[language] = 0
+                    xps[language] += xp
 
-            elif command == 'exit':
-                self.send_pulse(xps)
-                return
+                elif command == 'exit':
+                    self.send_pulse(xps)
+                    return
 
             if xps and datetime.now() > next_send:
                 next_send = datetime.now() + SEND_INTERVAL

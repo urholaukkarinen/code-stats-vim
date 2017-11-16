@@ -29,7 +29,7 @@ def log_xp():
 
 def check_xp():
     """Check if xp has been saved; if so, deduct from global pending xp"""
-    if pipe.poll():
+    while pipe.poll():
         sent_xp = pipe.recv()
         vim.command("let g:codestats_pending_xp -= %d" % sent_xp)
 

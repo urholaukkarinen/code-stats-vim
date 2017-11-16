@@ -13,8 +13,14 @@ else
     finish
 endif
 
+" Two XP counters
+let g:codestats_pending_xp = 0  " global total of unsaved XP
+let b:codestats_xp = 0          " buffer-local XP
 
-let b:codestats_xp = 0
+function s:add_xp()
+    let g:codestats_pending_xp += 1
+    let b:codestats_xp += 1
+endfunction
 
 " Handle Vim events
 augroup codestats
@@ -28,19 +34,18 @@ augroup codestats
     " TextChangedI could be used instead but some
     " plugins are doing something weird with it that
     " messes up the results.
-    au InsertCharPre * let b:codestats_xp += 1
+    au InsertCharPre * call s:add_xp()
 
     " ADDING XP: Normal mode changes
-    au TextChanged * let b:codestats_xp += 1
+    au TextChanged * call s:add_xp()
 
     " LOGGING XP
-    au InsertLeave * python log_xp()
-    au BufLeave * python log_xp()
+    au InsertEnter,InsertLeave,BufEnter,BufLeave * python log_xp()
 
     " STOPPING
     au VimLeavePre * python stop_loop()
 augroup END
 
 function! CodeStatsXp()
-    return 'C::S ' . b:codestats_xp
+    return 'C::S ' . g:codestats_pending_xp
 endfunction

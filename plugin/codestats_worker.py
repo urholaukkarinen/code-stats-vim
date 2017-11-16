@@ -11,8 +11,8 @@ def get_timestamp():
     return datetime.now().replace(microsecond=0, tzinfo=LOCAL_TZ).isoformat()
 
 class Worker:
-    def __init__(self, queue, api_key, pulse_url):
-        self.queue = queue
+    def __init__(self, pipe, api_key, pulse_url):
+        self.pipe = pipe
         self.api_key = api_key
         self.pulse_url = pulse_url
 
@@ -43,7 +43,7 @@ class Worker:
         next_send = datetime.now()
 
         while True:
-            command, args = self.queue.get()
+            command, args = self.pipe.recv()
 
             if command == 'xp':
                 language, xp = args
@@ -55,11 +55,13 @@ class Worker:
                 self.send_pulse(xps)
                 return
 
-            if datetime.now() > next_send:
+            if xps and datetime.now() > next_send:
                 next_send = datetime.now() + SEND_INTERVAL
 
                 if self.send_pulse(xps):
-                    # clear after successful send
+                    # clear after successful send; inform the Vim end of pipe
+                    total_sent_xp = sum(xps.values())
                     xps = {}
+                    self.pipe.send(total_sent_xp)
 
             time.sleep(0.1) # don't hog CPU idle looping

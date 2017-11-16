@@ -4,7 +4,7 @@ except ImportError:
     print("Python package 'vim' not found")
     exit(1)
 
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Pipe
 
 # make local imports work
 import sys
@@ -20,13 +20,19 @@ PULSE_URL = BASE_URL + "/api/my/pulses"
 def log_xp():
     language = vim.eval("&filetype")
     xp = int(vim.eval("b:codestats_xp"))
-    vim.command("let b:codestats_xp = 0")
-    queue.put(('xp', (language, xp)))
+    if xp > 0:
+        vim.command("let b:codestats_xp = 0")
+        pipe.send(('xp', (language, xp)))
+
+    # check if xp has been saved; if so, deduct from global pending xp
+    if pipe.poll():
+        sent_xp = pipe.recv()
+        vim.command("let g:codestats_pending_xp -= %d" % sent_xp)
 
 def stop_loop():
-    queue.put(('exit', None))
+    pipe.send(('exit', None))
 
-queue = Queue()
-worker = Worker(queue, API_KEY, PULSE_URL)
+pipe, worker_pipe = Pipe()
+worker = Worker(worker_pipe, API_KEY, PULSE_URL)
 p = Process(target=worker.run)
 p.start()

@@ -5,10 +5,10 @@ endif
 
 let s:codestats_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 if has('python')
-    execute 'pyfile ' . s:codestats_path . '/code-stats-vim.py'
+    execute 'pyfile ' . s:codestats_path . '/codestats.py'
 elseif has('python3')
     " TODO: ensure the python code works on python3
-    execute 'pyfile3 ' . s:codestats_path . '/code-stats-vim.py'
+    execute 'pyfile3 ' . s:codestats_path . '/codestats.py'
 else
     finish
 endif

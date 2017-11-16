@@ -1,5 +1,9 @@
-let s:codestats_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
+if !exists('g:codestats_api_key')
+    echomsg 'code-stats-vim requires g:codestats_api_key to be set!'
+    finish
+endif
 
+let s:codestats_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 if has('python')
     execute 'pyfile ' . s:codestats_path . '/code-stats-vim.py'
 elseif has('python3')

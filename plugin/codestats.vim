@@ -43,8 +43,18 @@ augroup codestats
     au InsertEnter,InsertLeave,BufEnter,BufLeave * python log_xp()
 
     " STOPPING
-    au VimLeavePre * python stop_loop()
+    au VimLeavePre * python stop_worker()
 augroup END
+
+" check xp periodically if possible
+if has('timers')
+    function CodestatsCheckXp(timer_id)
+        python check_xp()
+    endfunction
+
+    " run every 500ms, repeat infinitely
+    let s:timer = timer_start(500, 'CodestatsCheckXp', {'repeat': -1})
+endif
 
 function! CodeStatsXp()
     return 'C::S ' . g:codestats_pending_xp

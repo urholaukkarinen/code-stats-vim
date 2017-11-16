@@ -18,18 +18,23 @@ BASE_URL = (vim.eval("g:codestats_api_url") or "https://codestats.net")
 PULSE_URL = BASE_URL + "/api/my/pulses"
 
 def log_xp():
+    """Log XP (send to the worker process)"""
     language = vim.eval("&filetype")
     xp = int(vim.eval("b:codestats_xp"))
     if xp > 0:
         vim.command("let b:codestats_xp = 0")
         pipe.send(('xp', (language, xp)))
+    # always also check xp
+    check_xp()
 
-    # check if xp has been saved; if so, deduct from global pending xp
+def check_xp():
+    """Check if xp has been saved; if so, deduct from global pending xp"""
     if pipe.poll():
         sent_xp = pipe.recv()
         vim.command("let g:codestats_pending_xp -= %d" % sent_xp)
 
-def stop_loop():
+def stop_worker():
+    """Stop the worker process"""
     pipe.send(('exit', None))
 
 pipe, worker_pipe = Pipe()

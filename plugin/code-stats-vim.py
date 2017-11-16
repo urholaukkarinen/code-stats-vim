@@ -25,37 +25,52 @@ SEND_INTERVAL = timedelta(seconds=10)
 def get_timestamp():
     return datetime.now().replace(microsecond=0, tzinfo=LOCAL_TZ).isoformat()
 
+
+def send_pulse(xps):
+    payload = json.dumps({
+        'coded_at': get_timestamp(),
+        'xps': xps
+    })
+    headers = {
+        "Content-Type": "application/json",
+        "User-Agent": "code-stats-vim/poc",
+        "X-API-Token": API_KEY
+    }
+
+    req = urllib2.Request(url=PULSE_URL, data=payload, headers=headers)
+
+    try:
+        urllib2.urlopen(req)
+    except urllib2.URLError:
+        # TODO: logging? consecutive error counting?
+        return False
+
+    return True
+
+
 def loop(q):
     xps = {}
     next_send = datetime.now()
 
     while True:
         command, args = q.get()
+
         if command == 'xp':
             language, xp = args
             if language not in xps:
                 xps[language] = 0
             xps[language] += xp
+
         elif command == 'exit':
+            send_pulse(xps)
             return
 
         if datetime.now() > next_send:
             next_send = datetime.now() + SEND_INTERVAL
 
-            payload = json.dumps({
-                'coded_at': get_timestamp(),
-                'xps': xps
-            })
-            headers = {
-                "Content-Type": "application/json",
-                "User-Agent": "code-stats-vim/poc",
-                "X-API-Token": API_KEY
-            }
-            req = urllib2.Request(url=PULSE_URL, data=payload, headers=headers)
-            response = urllib2.urlopen(req)
-            # TODO: handle response
-
-            xps = {}
+            if send_pulse(xps):
+                # clear after successful send
+                xps = {}
 
         time.sleep(0.1) # don't hog CPU idle looping
 

@@ -18,6 +18,7 @@ endfunction
 
 augroup codestats
     au!
+    " TODO: understand the events better, then check what to do
     au TextChanged * let b:codestats_xp += 1
 
     " Does not fire for newlines or backspaces,

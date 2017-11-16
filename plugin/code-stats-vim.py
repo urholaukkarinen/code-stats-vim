@@ -1,5 +1,3 @@
-DEFAULT_URL = "https://codestats.net/api/my/pulses"
-
 try:
     import vim
 except ImportError:
@@ -10,6 +8,7 @@ from datetime import datetime, timedelta
 import json
 import time
 from multiprocessing import Process, Queue
+import urllib2
 
 # local imports
 import sys
@@ -18,6 +17,9 @@ sys.path.append(vim.eval("s:codestats_path"))
 from localtz import LOCAL_TZ
 
 
+API_KEY = vim.eval("g:codestats_api_key")
+BASE_URL = (vim.eval("g:codestats_api_url") or "https://codestats.net")
+PULSE_URL = BASE_URL + "/api/my/pulses"
 SEND_INTERVAL = timedelta(seconds=10)
 
 def get_timestamp():
@@ -39,13 +41,21 @@ def loop(q):
 
         if datetime.now() > next_send:
             next_send = datetime.now() + SEND_INTERVAL
-            with open('/tmp/vimout', 'a') as f:
-                payload = {
-                    'coded_at': get_timestamp(),
-                    'xps': xps
-                }
-                f.write(json.dumps(payload) + "\n")
-                xps = {}
+
+            payload = json.dumps({
+                'coded_at': get_timestamp(),
+                'xps': xps
+            })
+            headers = {
+                "Content-Type": "application/json",
+                "User-Agent": "code-stats-vim/poc",
+                "X-API-Token": API_KEY
+            }
+            req = urllib2.Request(url=PULSE_URL, data=payload, headers=headers)
+            response = urllib2.urlopen(req)
+            # TODO: handle response
+
+            xps = {}
 
         time.sleep(0.1) # don't hog CPU idle looping
 

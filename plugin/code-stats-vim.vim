@@ -1,9 +1,14 @@
-if !has('python')
+let s:codestats_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
+
+if has('python')
+    execute 'pyfile ' . s:codestats_path . '/code-stats-vim.py'
+elseif has('python3')
+    " TODO: ensure the python code works on python3
+    execute 'pyfile3 ' . s:codestats_path . '/code-stats-vim.py'
+else
     finish
 endif
 
-let s:codestats_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
-execute 'pyfile ' . s:codestats_path . "/code-stats-vim.py"
 
 let b:codestats_xp = 0
 

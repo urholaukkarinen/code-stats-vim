@@ -2,6 +2,9 @@ if !has('python')
     finish
 endif
 
+let s:cspy = fnamemodify(resolve(expand('<sfile>:p')), ':h') . "/code-stats-vim.py"
+execute 'pyfile ' . s:cspy
+
 let b:codestats_xp = 0
 
 function! s:Xp()
@@ -22,8 +25,8 @@ augroup codestats
     " backspaces by gaining xp when entering/leaving
     " insert mode.
     au InsertEnter * let b:codestats_xp += 1
-    au InsertLeave * let b:codestats_xp += 1
-    au BufWritePost * pyfile ./plugin/code-stats-vim.py
+    au InsertLeave * python log_xp()
+    au BufWritePost * python stop_loop()
     au BufEnter * if !exists('b:codestats_xp') | let b:codestats_xp = 0 | endif
 augroup END
 

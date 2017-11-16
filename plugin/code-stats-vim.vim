@@ -12,28 +12,31 @@ endif
 
 let b:codestats_xp = 0
 
-function! s:Xp()
-    echom 'Code::Stats XP:' b:codestats_xp
-endfunction
-
+" Handle Vim events
 augroup codestats
     au!
-    " TODO: understand the events better, then check what to do
-    au TextChanged * let b:codestats_xp += 1
 
+    " STARTUP
+    au BufEnter * if !exists('b:codestats_xp') | let b:codestats_xp = 0 | endif
+
+    " ADDING XP: Insert mode
     " Does not fire for newlines or backspaces,
     " TextChangedI could be used instead but some
     " plugins are doing something weird with it that
     " messes up the results.
     au InsertCharPre * let b:codestats_xp += 1
 
-    " Compensate the lack of xp from newlines and
-    " backspaces by gaining xp when entering/leaving
-    " insert mode.
-    au InsertEnter * let b:codestats_xp += 1
+    " ADDING XP: Normal mode changes
+    au TextChanged * let b:codestats_xp += 1
+
+    " LOGGING XP
     au InsertLeave * python log_xp()
-    au BufWritePost * python stop_loop()
-    au BufEnter * if !exists('b:codestats_xp') | let b:codestats_xp = 0 | endif
+    au BufLeave * python log_xp()
+
+    " STOPPING
+    au VimLeavePre * python stop_loop()
 augroup END
 
-command! Xp :call s:Xp()
+function! CodeStatsXp()
+    return 'C::S ' . b:codestats_xp
+endfunction

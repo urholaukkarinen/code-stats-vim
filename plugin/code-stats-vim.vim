@@ -2,8 +2,8 @@ if !has('python')
     finish
 endif
 
-let s:cspy = fnamemodify(resolve(expand('<sfile>:p')), ':h') . "/code-stats-vim.py"
-execute 'pyfile ' . s:cspy
+let s:codestats_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
+execute 'pyfile ' . s:codestats_path . "/code-stats-vim.py"
 
 let b:codestats_xp = 0
 

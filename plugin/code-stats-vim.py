@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 DEFAULT_URL = "https://codestats.net/api/my/pulses"
 
 try:
@@ -8,13 +6,19 @@ except ImportError:
     print("Python package 'vim' not found")
     exit(1)
 
-import datetime
+from datetime import datetime
 import json
 import time
 from multiprocessing import Process, Queue
 
+# local imports
+import sys
+sys.path.append(vim.eval("s:codestats_path"))
+
+from localtz import LOCAL_TZ
+
 def get_timestamp():
-    return datetime.datetime.now().replace(microsecond=0).isoformat()
+    return datetime.now().replace(microsecond=0, tzinfo=LOCAL_TZ).isoformat()
 
 def loop(q):
     while True:

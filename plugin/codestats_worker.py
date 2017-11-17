@@ -5,6 +5,7 @@ import json
 import time
 import urllib2
 
+from codestats_version import __version__
 from codestats_filetypes import get_language_name
 from localtz import LOCAL_TZ
 
@@ -37,7 +38,7 @@ class Worker:
     def get_headers(self):
         return {
             "Content-Type": "application/json",
-            "User-Agent": "code-stats-vim/poc",
+            "User-Agent": "code-stats-vim/%s" % __version__,
             "X-API-Token": self.api_key,
             "Accept": "*/*"
         }

@@ -1,5 +1,7 @@
 # [Code::Stats](https://codestats.net) plugin for Vim
 
+**Warning:** This plugin is still an early beta. Not recommended for use yet.
+
 ## Requirements
 
 - Vim >= 7.3.196 or NeoVim

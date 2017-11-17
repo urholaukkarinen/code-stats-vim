@@ -71,7 +71,7 @@ FILETYPE_MAP = {
     "vbnet":              "Visual Basic .NET",
     "vim":                "VimL",
     "yaml":               "YAML",
-    "zsh":                "Shell Script (Zsh)"
+    "zsh":                "Shell Script (Zsh)",
 
     # known filetypes with no human-readable version
     "2html":              "2html",

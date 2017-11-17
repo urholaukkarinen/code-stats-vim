@@ -71,7 +71,8 @@ class Worker:
                     xps[language] += xp
 
                 elif command == 'exit':
-                    self.send_pulse(xps)
+                    if xps:
+                        self.send_pulse(xps)
                     return
 
             if xps and datetime.now() > next_send:

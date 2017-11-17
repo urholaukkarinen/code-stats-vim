@@ -19,20 +19,24 @@ class Worker:
     def send_pulse(self, xps):
         payload = json.dumps({
             'coded_at': get_timestamp(),
-            'xps': xps
+            'xps': list(dict(language=lang, xp=xp) for (lang, xp) in xps.items())
         })
         headers = {
             "Content-Type": "application/json",
             "User-Agent": "code-stats-vim/poc",
-            "X-API-Token": self.api_key
+            "X-API-Token": self.api_key,
+            "Accept": "*/*"
         }
 
         req = urllib2.Request(url=self.pulse_url, data=payload, headers=headers)
 
         try:
-            urllib2.urlopen(req)
-        except urllib2.URLError:
+            response = urllib2.urlopen(req)
+            response.read()
+            # connection might not be closed without .read()
+        except urllib2.URLError as e:
             # TODO: logging? consecutive error counting?
+            # note: response body is in e.read()
             return False
 
         return True

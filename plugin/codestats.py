@@ -36,6 +36,7 @@ def check_xp():
 def stop_worker():
     """Stop the worker process"""
     pipe.send(('exit', None))
+    # FIXME: this is often too slow
 
 pipe, worker_pipe = Pipe()
 worker = Worker(worker_pipe, API_KEY, PULSE_URL)

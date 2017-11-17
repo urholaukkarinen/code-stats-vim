@@ -21,3 +21,11 @@ let g:codestats_api_key = 'YOUR_KEY_HERE'
 Get the API key from your [Code::Stats machine page](https://codestats.net/my/machines).
 
 You may additionally set `g:codestats_api_url` to use another Code::Stats server.
+
+## Tips
+
+Display pending XP in [vim-airline](https://github.com/vim-airline/vim-airline):
+
+```
+let g:airline_section_y = airline#section#create_right(['ffenc','%{CodeStatsXp()}'])
+```

@@ -1,6 +1,12 @@
+" API key: required
 if !exists('g:codestats_api_key')
     echomsg 'code-stats-vim requires g:codestats_api_key to be set!'
     finish
+endif
+
+" API endpoint
+if !exists('g:codestats_api_url')
+    let g:codestats_api_url = 'https://codestats.net'
 endif
 
 let s:codestats_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
@@ -12,6 +18,7 @@ elseif has('python3')
 else
     finish
 endif
+
 
 " Two XP counters
 let g:codestats_pending_xp = 0  " global total of unsaved XP

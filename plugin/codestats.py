@@ -14,7 +14,7 @@ from codestats_worker import Worker
 
 
 API_KEY = vim.eval("g:codestats_api_key")
-BASE_URL = (vim.eval("g:codestats_api_url") or "https://codestats.net")
+BASE_URL = vim.eval("g:codestats_api_url")
 PULSE_URL = BASE_URL + "/api/my/pulses"
 
 def log_xp():

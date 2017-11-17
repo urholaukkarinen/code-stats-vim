@@ -1,14 +1,32 @@
+"""Worker that communicates with the Code::Stats API"""
+
 from datetime import datetime, timedelta
 import json
 import time
 import urllib2
 
+from codestats_filetypes import get_language_name
 from localtz import LOCAL_TZ
 
 SEND_INTERVAL = timedelta(seconds=10)
 
+
 def get_timestamp():
     return datetime.now().replace(microsecond=0, tzinfo=LOCAL_TZ).isoformat()
+
+def get_xps_list(xps_dict):
+    xps_list = []
+    for (filetype, xp) in xps_dict.items():
+        item = dict(language=get_language_name(filetype), xp=xp)
+        xps_list.append(item)
+    return xps_list
+
+def get_payload(xps):
+    return json.dumps({
+        'coded_at': get_timestamp(),
+        'xps': get_xps_list(xps)
+    })
+
 
 class Worker:
     def __init__(self, pipe, api_key, pulse_url):
@@ -16,19 +34,16 @@ class Worker:
         self.api_key = api_key
         self.pulse_url = pulse_url
 
-    def send_pulse(self, xps):
-        payload = json.dumps({
-            'coded_at': get_timestamp(),
-            'xps': list(dict(language=lang, xp=xp) for (lang, xp) in xps.items())
-        })
-        headers = {
+    def get_headers(self):
+        return {
             "Content-Type": "application/json",
             "User-Agent": "code-stats-vim/poc",
             "X-API-Token": self.api_key,
             "Accept": "*/*"
         }
 
-        req = urllib2.Request(url=self.pulse_url, data=payload, headers=headers)
+    def send_pulse(self, xps):
+        req = urllib2.Request(url=self.pulse_url, data=get_payload(xps), headers=self.get_headers())
 
         try:
             response = urllib2.urlopen(req)
@@ -38,9 +53,7 @@ class Worker:
             # TODO: logging? consecutive error counting?
             # note: response body is in e.read()
             return False
-
         return True
-
 
     def run(self):
         xps = {}

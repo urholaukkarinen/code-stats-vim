@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+"""Vim-specific functionality"""
+
 try:
     import vim
 except ImportError:

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """A mapping of Vim filetypes to human-readable ones"""
 
 def get_language_name(filetype):

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Local tzinfo implementation
 
 Shamelessly stolen from https://docs.python.org/2/library/datetime.html .

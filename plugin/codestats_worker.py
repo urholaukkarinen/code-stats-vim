@@ -67,7 +67,8 @@ class Worker:
         next_send = datetime.now()
 
         while True:
-            if self.pipe.poll():
+            # handle all events in pipe (usually there's at most one)
+            while self.pipe.poll():
                 command, args = self.pipe.recv()
 
                 if command == 'xp':

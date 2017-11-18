@@ -1,2 +1,5 @@
 /.vscode
+/.coverage
 *.pyc
+.cache/
+__pycache/

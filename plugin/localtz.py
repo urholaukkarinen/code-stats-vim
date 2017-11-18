@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Local tzinfo implementation
 
 Shamelessly stolen from https://docs.python.org/2/library/datetime.html .
@@ -11,15 +10,17 @@ ZERO = timedelta(0)
 
 # A class capturing the platform's idea of local time.
 
-STDOFFSET = timedelta(seconds = -_time.timezone)
+STDOFFSET = timedelta(seconds=-_time.timezone)
 if _time.daylight:
-    DSTOFFSET = timedelta(seconds = -_time.altzone)
+    DSTOFFSET = timedelta(seconds=-_time.altzone)
 else:
     DSTOFFSET = STDOFFSET
 
 DSTDIFF = DSTOFFSET - STDOFFSET
 
+
 class LocalTimezone(tzinfo):
+    """A tzinfo implementation of local timezone"""
 
     def utcoffset(self, dt):
         if self._isdst(dt):
@@ -43,5 +44,6 @@ class LocalTimezone(tzinfo):
         stamp = _time.mktime(tt)
         tt = _time.localtime(stamp)
         return tt.tm_isdst > 0
+
 
 LOCAL_TZ = LocalTimezone()

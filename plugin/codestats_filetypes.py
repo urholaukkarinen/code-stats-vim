@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """A mapping of Vim filetypes to human-readable ones"""
 
+
 def get_language_name(filetype):
     """Return language name (human-readable) for a Vim filetype"""
     if filetype in FILETYPE_MAP:
         return FILETYPE_MAP[filetype]
     return filetype
+
 
 # all the filetypes from Vim 8.0 + sheerun/vim-polyglot
 FILETYPE_MAP = {

@@ -13,12 +13,13 @@ from multiprocessing import Process, Pipe
 import sys
 sys.path.append(vim.eval("s:codestats_path"))
 
-from codestats_worker import Worker
+from codestats_worker import Worker  # noqa: E402
 
 
 API_KEY = vim.eval("g:codestats_api_key")
 BASE_URL = vim.eval("g:codestats_api_url")
 PULSE_URL = BASE_URL + "/api/my/pulses"
+
 
 def log_xp():
     """Log XP (send to the worker process)"""
@@ -30,16 +31,19 @@ def log_xp():
     # always also check xp
     check_xp()
 
+
 def check_xp():
     """Check if xp has been saved; if so, deduct from global pending xp"""
     while pipe.poll():
         sent_xp = pipe.recv()
         vim.command("let g:codestats_pending_xp -= %d" % sent_xp)
 
+
 def stop_worker():
     """Stop the worker process"""
     pipe.send(('exit', None))
     # FIXME: this is often too slow
+
 
 pipe, worker_pipe = Pipe()
 worker = Worker(worker_pipe, API_KEY, PULSE_URL)

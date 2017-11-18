@@ -22,6 +22,7 @@ def get_timestamp():
     """Get current time in ISO 8601 format with local timezone"""
     return datetime.now().replace(microsecond=0, tzinfo=LOCAL_TZ).isoformat()
 
+
 def get_xps_list(xps_dict):
     """Convert XPs from internal format to API format"""
     xps_list = []
@@ -29,6 +30,7 @@ def get_xps_list(xps_dict):
         item = dict(language=get_language_name(filetype), xp=xp)
         xps_list.append(item)
     return xps_list
+
 
 def get_payload(xps):
     """Create Pulse data given XPs"""
@@ -57,20 +59,22 @@ class Worker(object):
 
     def send_pulse(self, xps):
         """Send XP to the Pulses API"""
-        req = Request(url=self.pulse_url, data=get_payload(xps), headers=self.get_headers())
+        req = Request(url=self.pulse_url,
+                      data=get_payload(xps),
+                      headers=self.get_headers())
 
         try:
             response = urlopen(req)
             response.read()
             # connection might not be closed without .read()
-        except URLError as e:
+        except URLError:
             # TODO: logging? consecutive error counting?
             # note: response body is in e.read()
             return False
         return True
 
     def run(self):
-        """Main loop: listen to events, send pulses in SEND_INTERVAL intervals"""
+        """Main loop: listen to events, send pulses"""
         xps = {}
         next_send = datetime.now()
 
@@ -100,4 +104,4 @@ class Worker(object):
                     xps = {}
                     self.pipe.send(total_sent_xp)
 
-            time.sleep(0.1) # don't hog CPU idle looping
+            time.sleep(0.1)  # don't hog CPU idle looping

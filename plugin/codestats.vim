@@ -34,17 +34,17 @@ let g:codestats_pending_xp = 0  " global total of unsaved XP
 let b:codestats_xp = 0          " buffer-local XP
 
 
-function s:add_xp()
+function! s:add_xp()
     let g:codestats_pending_xp += 1
     let b:codestats_xp += 1
 endfunction
 
-function s:log_xp()
-    execute s:python . ' log_xp()'
+function! s:log_xp()
+    execute s:python . ' codestats.log_xp()'
 endfunction
 
-function s:exit()
-    execute s:python . ' stop_worker()'
+function! s:exit()
+    execute s:python . ' codestats.stop_worker()'
 endfunction
 
 
@@ -75,8 +75,8 @@ augroup END
 
 " check xp periodically if possible
 if has('timers')
-    function CodestatsCheckXp(timer_id)
-        execute s:python . ' check_xp()'
+    function! CodestatsCheckXp(timer_id)
+        execute s:python . ' codestats.check_xp()'
     endfunction
 
     " run every 500ms, repeat infinitely

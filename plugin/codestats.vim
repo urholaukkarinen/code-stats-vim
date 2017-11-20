@@ -30,8 +30,12 @@ endif
 
 
 " Two XP counters
-let g:codestats_pending_xp = 0  " global total of unsaved XP
-let b:codestats_xp = 0          " buffer-local XP
+if !exists('g:codestats_pending_xp')
+    let g:codestats_pending_xp = 0  " global total of unsaved XP
+endif
+if !exists('b:codestats_xp')
+    let b:codestats_xp = 0          " buffer-local XP
+endif
 
 
 function! s:add_xp()
@@ -75,9 +79,16 @@ augroup END
 
 " check xp periodically if possible
 if has('timers')
+    " NOTE: the script cannot be script-local (s:check_xp or such) because
+    " the timer could not access it
     function! CodestatsCheckXp(timer_id)
         execute s:python . ' codestats.check_xp()'
     endfunction
+
+    " this script may be run many times; ensure only one timer
+    if exists('s:timer')
+        call timer_stop(s:timer)
+    endif
 
     " run every 500ms, repeat infinitely
     let s:timer = timer_start(500, 'CodestatsCheckXp', {'repeat': -1})

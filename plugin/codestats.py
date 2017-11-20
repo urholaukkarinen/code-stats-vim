@@ -28,8 +28,16 @@ class Codestats(object):
 
         self.pipe, worker_pipe = multiprocessing.Pipe()
         worker = Worker(worker_pipe, API_KEY, PULSE_URL)
-        p = multiprocessing.Process(target=worker.run)
-        p.start()
+        self.process = multiprocessing.Process(target=worker.run)
+        self.process.start()
+
+    def __del__(self):
+        """Stop the worker process and clean up"""
+        # stop worker loop, wait for the process to stop
+        self.pipe.send(('exit', None))
+        # worker process sends back xp saved on exit
+        self.check_xp()
+        self.process.join()
 
     def log_xp(self):
         """Log XP (send to the worker process)"""
@@ -47,13 +55,10 @@ class Codestats(object):
             sent_xp = self.pipe.recv()
             vim.command("let g:codestats_pending_xp -= %d" % sent_xp)
 
-    def stop_worker(self):
-        """Stop the worker process"""
-        self.pipe.send(('exit', None))
-        # FIXME: this is often too slow
 
+# on :PlugUpdate, unload the old instance before setting up a new one
+if "codestats" in globals():
+    # assumption: refcount is zero after this
+    del codestats
 
-# guard: don't create a new instance on :PlugUpdate
-if "codestats" not in globals():
-    codestats = Codestats()
-# TODO: implement hot reloading or such, ie. updating plugin on the fly
+codestats = Codestats()

@@ -32,3 +32,7 @@ Display pending XP in [vim-airline](https://github.com/vim-airline/vim-airline):
 ```
 let g:airline_section_y = airline#section#create_right(['ffenc','%{CodeStatsXp()}'])
 ```
+
+## Hacking on `code-stats-vim`
+
+Point vim-plug to a local copy: `Plug '~/code-stats-vim'`. Edit. Run lint with `flake8` and tests with `pytest`.

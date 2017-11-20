@@ -47,6 +47,7 @@ class Worker(object):
         self.pipe = pipe
         self.api_key = api_key
         self.pulse_url = pulse_url
+        self.xps = {}
 
     def get_headers(self):
         """Get HTTP headers used for the API"""
@@ -57,7 +58,7 @@ class Worker(object):
             "Accept": "*/*"
         }
 
-    def send_pulse(self, xps):
+    def _send_pulse(self, xps):
         """Send XP to the Pulses API"""
         req = Request(url=self.pulse_url,
                       data=get_payload(xps),
@@ -73,9 +74,17 @@ class Worker(object):
             return False
         return True
 
+    def send_xp(self):
+        """Send XP to API, communicate sent XP to parent process"""
+        if self.xps:
+            if self._send_pulse(self.xps):
+                # clear after successful send
+                total_sent_xp = sum(self.xps.values())
+                self.xps = {}
+                self.pipe.send(total_sent_xp)
+
     def run(self):
         """Main loop: listen to events, send pulses"""
-        xps = {}
         next_send = datetime.now()
 
         while True:
@@ -85,23 +94,17 @@ class Worker(object):
 
                 if command == 'xp':
                     language, xp = args
-                    if language not in xps:
-                        xps[language] = 0
-                    xps[language] += xp
+                    if language not in self.xps:
+                        self.xps[language] = 0
+                    self.xps[language] += xp
 
                 elif command == 'exit':
-                    if xps:
-                        self.send_pulse(xps)
+                    self.send_xp()
                     return
 
             # check if it's time to send and there's pending XP
-            if xps and datetime.now() > next_send:
+            if self.xps and datetime.now() > next_send:
                 next_send = datetime.now() + SEND_INTERVAL
-
-                if self.send_pulse(xps):
-                    # clear after successful send; inform the Vim end of pipe
-                    total_sent_xp = sum(xps.values())
-                    xps = {}
-                    self.pipe.send(total_sent_xp)
+                self.send_xp()
 
             time.sleep(0.1)  # don't hog CPU idle looping

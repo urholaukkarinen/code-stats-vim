@@ -15,6 +15,11 @@ if !exists('g:codestats_api_url')
     let g:codestats_api_url = 'https://codestats.net'
 endif
 
+" this script may be run many times; stop timer before reloading Python code
+if exists('s:timer')
+    call timer_stop(s:timer)
+endif
+
 " check Python 2 or 3 support
 let s:codestats_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 if has('python3')
@@ -29,10 +34,11 @@ else
 endif
 
 
-" Two XP counters
-if !exists('g:codestats_pending_xp')
-    let g:codestats_pending_xp = 0  " global total of unsaved XP
-endif
+" Two XP counters.
+" On :PlugUpdate, we intentionally clear pending XP because the worker
+" process that was supposed to send it is already gone.
+" Buffer-local XP is kept and sent in the future.
+let g:codestats_pending_xp = 0      " global total of unsaved XP
 if !exists('b:codestats_xp')
     let b:codestats_xp = 0          " buffer-local XP
 endif
@@ -48,7 +54,7 @@ function! s:log_xp()
 endfunction
 
 function! s:exit()
-    execute s:python . ' codestats.stop_worker()'
+    execute s:python . ' del codestats'
 endfunction
 
 
@@ -81,17 +87,12 @@ augroup END
 if has('timers')
     " NOTE: the script cannot be script-local (s:check_xp or such) because
     " the timer could not access it
-    function! CodestatsCheckXp(timer_id)
+    function! codestats#check_xp(timer_id)
         execute s:python . ' codestats.check_xp()'
     endfunction
 
-    " this script may be run many times; ensure only one timer
-    if exists('s:timer')
-        call timer_stop(s:timer)
-    endif
-
     " run every 500ms, repeat infinitely
-    let s:timer = timer_start(500, 'CodestatsCheckXp', {'repeat': -1})
+    let s:timer = timer_start(500, 'codestats#check_xp', {'repeat': -1})
 endif
 
 

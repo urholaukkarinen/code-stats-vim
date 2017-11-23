@@ -45,8 +45,11 @@ endif
 
 
 function! s:add_xp()
-    let g:codestats_pending_xp += 1
-    let b:codestats_xp += 1
+    " plugins trigger TextChanged (eg. vim-plug) for unmodifiable buffers
+    if &modifiable
+        let g:codestats_pending_xp += 1
+        let b:codestats_xp += 1
+    endif
 endfunction
 
 function! s:log_xp()

@@ -54,6 +54,9 @@ function! s:log_xp()
 endfunction
 
 function! s:exit()
+    if exists('s:timer')
+        call timer_stop(s:timer)
+    endif
     execute s:python . ' del codestats'
 endfunction
 

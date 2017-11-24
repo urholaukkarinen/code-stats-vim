@@ -53,7 +53,14 @@ function! s:add_xp()
 endfunction
 
 function! s:log_xp()
-    execute s:python . ' codestats.log_xp()'
+    execute s:python . ' codestats.log_xp("' .
+            \ &filetype . '", ' .
+            \ b:codestats_xp . ')'
+    let b:codestats_xp = 0
+    if !exists('s:timer')
+        " Vim compiled without timer support; need to make this call here
+        call codestats#check_xp(0)
+    endif
 endfunction
 
 function! s:exit()
@@ -62,6 +69,13 @@ function! s:exit()
     endif
     execute s:python . ' del codestats'
 endfunction
+
+" NOTE: the script cannot be script-local (s:check_xp or such) because
+" the timer could not access it
+function! codestats#check_xp(timer_id)
+    execute s:python . ' codestats.check_xp()'
+endfunction
+
 
 
 " Handle Vim events
@@ -91,12 +105,6 @@ augroup END
 
 " check xp periodically if possible
 if has('timers')
-    " NOTE: the script cannot be script-local (s:check_xp or such) because
-    " the timer could not access it
-    function! codestats#check_xp(timer_id)
-        execute s:python . ' codestats.check_xp()'
-    endfunction
-
     " run every 500ms, repeat infinitely
     let s:timer = timer_start(500, 'codestats#check_xp', {'repeat': -1})
 endif

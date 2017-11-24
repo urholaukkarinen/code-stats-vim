@@ -39,20 +39,18 @@ class Codestats(object):
         self.check_xp()
         self.process.join()
 
-    def log_xp(self):
+    def log_xp(self, language, xp):
         """Log XP (send to the worker process)"""
-        language = vim.eval("&filetype")
-        xp = int(vim.eval("b:codestats_xp"))
         if xp > 0:
-            vim.command("let b:codestats_xp = 0")
             self.pipe.send(('xp', (language, xp)))
-        # always also check xp
-        self.check_xp()
 
     def check_xp(self):
         """Check if xp has been saved; if so, deduct from global pending xp"""
+        sent_xp = 0
         while self.pipe.poll():
-            sent_xp = self.pipe.recv()
+            sent_xp += self.pipe.recv()
+
+        if sent_xp > 0:
             vim.command("let g:codestats_pending_xp -= %d" % sent_xp)
 
 

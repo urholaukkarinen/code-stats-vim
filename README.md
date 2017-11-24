@@ -3,14 +3,9 @@
 
 # [Code::Stats](https://codestats.net) plugin for Vim
 
-**Warning:** This plugin is still an early beta. Not recommended for use yet.
+Vim plugin that counts your keypresses and saves statistics to [Code::Stats](https://codestats.net), a free stats tracking service for programmers.
 
-## Requirements
-
-- Vim >= 7.3.196 or NeoVim
-- Compiled with Python (2.6+ or 3) support
-
-Technical reasons: we use the `InsertCharPre` event in Vim and `multiprocessing` module in Python.
+![Screen capture of code-stats-vim logging and sending XP](https://thumbs.gfycat.com/HastyAnxiousBlackfootedferret-size_restricted.gif)
 
 ## Installation
 
@@ -25,12 +20,19 @@ Get the API key from your [Code::Stats machine page](https://codestats.net/my/ma
 
 You may additionally set `g:codestats_api_url` to use another Code::Stats server.
 
+## Requirements
+
+- Vim >= 7.3.196 or NeoVim
+- Compiled with Python (2.6+ or 3) support
+
+Technical reasons: we use the `InsertCharPre` event in Vim and `multiprocessing` module in Python.
+
 ## Tips
 
 Display pending XP in [vim-airline](https://github.com/vim-airline/vim-airline):
 
 ```
-let g:airline_section_y = airline#section#create_right(['ffenc','%{CodeStatsXp()}'])
+let g:airline_section_x = airline#section#create_right(['tagbar', 'filetype', '%{CodeStatsXp()}'])
 ```
 
 ## Hacking on `code-stats-vim`

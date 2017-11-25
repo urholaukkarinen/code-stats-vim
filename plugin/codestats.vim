@@ -1,3 +1,7 @@
+" Declare our public API in case we exit early
+" (often configured to be called automatically, so don't throw errors on call)
+function! CodeStatsXp() | endfunction
+
 " Check InsertCharPre support (Vim >= 7.3.186 in practice)
 if !exists('##InsertCharPre')
     echomsg 'code-stats-vim requires InsertCharPre support (Vim >= 7.3.186)!'

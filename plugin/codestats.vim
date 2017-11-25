@@ -1,6 +1,7 @@
 " Declare our public API in case we exit early
 " (often configured to be called automatically, so don't throw errors on call)
-function! CodeStatsXp() | endfunction
+function! CodeStatsXp()
+endfunction
 
 " Check InsertCharPre support (Vim >= 7.3.186 in practice)
 if !exists('##InsertCharPre')
@@ -74,12 +75,20 @@ function! s:exit()
     execute s:python . ' del codestats'
 endfunction
 
-" NOTE: the script cannot be script-local (s:check_xp or such) because
+" the Python code calls this function when xp has been sent successfully
+function! s:xp_was_sent(xp)
+    let g:codestats_pending_xp -= a:xp
+    if exists('g:codestats_error')
+        " clear error on success
+        unlet g:codestats_error
+    endif
+endfunction
+
+" NOTE: this function cannot be script-local (s:check_xp or such) because
 " the timer could not access it
 function! codestats#check_xp(timer_id)
     execute s:python . ' codestats.check_xp()'
 endfunction
-
 
 
 " Handle Vim events
@@ -116,5 +125,8 @@ endif
 
 " export function that returns pending xp like "C::S 13"
 function! CodeStatsXp()
+    if exists('g:codestats_error')
+        return 'C::S ERR'
+    endif
     return 'C::S ' . g:codestats_pending_xp
 endfunction

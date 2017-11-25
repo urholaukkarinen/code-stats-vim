@@ -68,20 +68,26 @@ class Worker(object):
             response = urlopen(req)
             response.read()
             # connection might not be closed without .read()
-        except URLError:
-            # TODO: logging? consecutive error counting?
-            # note: response body is in e.read()
-            return False
-        return True
+        except URLError as e:
+            try:
+                # HTTP error
+                return (False, "%d %s" % (e.code, e.read().decode("utf-8")))
+            except AttributeError:
+                # non-HTTP error, eg. no network
+                return (False, e.reason)
+        return (True, None)
 
     def send_xp(self):
         """Send XP to API, communicate sent XP to parent process"""
         if self.xps:
-            if self._send_pulse(self.xps):
+            success, error = self._send_pulse(self.xps)
+            if success:
                 # clear after successful send
                 total_sent_xp = sum(self.xps.values())
                 self.xps = {}
-                self.pipe.send(total_sent_xp)
+                self.pipe.send((True, total_sent_xp))
+            else:
+                self.pipe.send((False, str(error)))
 
     def run(self):
         """Main loop: listen to events, send pulses"""

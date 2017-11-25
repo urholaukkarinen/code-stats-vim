@@ -45,13 +45,24 @@ class Codestats(object):
             self.pipe.send(('xp', (language, xp)))
 
     def check_xp(self):
-        """Check if xp has been saved; if so, deduct from global pending xp"""
+        """Check if xp has been saved; if so, deduct from global pending xp
+
+        If there was an error, save error message in g:codestats_error
+        """
         sent_xp = 0
+        error = None
         while self.pipe.poll():
-            sent_xp += self.pipe.recv()
+            success, data = self.pipe.recv()
+            if success:
+                sent_xp += data
+            else:
+                error = data
 
         if sent_xp > 0:
-            vim.command("let g:codestats_pending_xp -= %d" % sent_xp)
+            vim.command("call s:xp_was_sent(%d)" % sent_xp)
+        if error is not None:
+            vim.command("let g:codestats_error = '%s'" %
+                        error.replace("'", "''"))
 
 
 # on :PlugUpdate, unload the old instance before setting up a new one

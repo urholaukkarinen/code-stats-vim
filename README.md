@@ -35,6 +35,8 @@ Display pending XP in [vim-airline](https://github.com/vim-airline/vim-airline):
 let g:airline_section_x = airline#section#create_right(['tagbar', 'filetype', '%{CodeStatsXp()}'])
 ```
 
+If there was an error (eg. no network connection, invalid API key), `CodeStatsXp()` returns `C::S ERR`. An error message can be seen in `g:codestats_error`. When a pulse is successfully sent, the error is cleared.
+
 ## Hacking on `code-stats-vim`
 
 Point vim-plug to a local copy: `Plug '~/code-stats-vim'`. Edit. Run lint with `flake8` and tests with `pytest`.

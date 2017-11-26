@@ -9,33 +9,43 @@ Vim plugin that counts your keypresses and saves statistics to [Code::Stats](htt
 
 ## Installation
 
-Using [vim-plug](https://github.com/junegunn/vim-plug), add the following lines to your config:
+### Easy mode: [vim-plug](https://github.com/junegunn/vim-plug) + [vim-airline](https://github.com/vim-airline/vim-airline)
+
+1. Get a Code::Stats account and copy your API key from the [Code::Stats machine page](https://codestats.net/my/machines).
+
+2. Install [vim-plug](https://github.com/junegunn/vim-plug) if you haven't already.
+
+3. Add the following in your `.vimrc` or `init.vim` (or edit the existing plugin section).
 
 ```
+call plug#begin('~/.vim/plugged')
+" ... your other plugins
+
 Plug 'https://gitlab.com/code-stats/code-stats-vim.git'
+Plug 'vim-airline/vim-airline'
+
+call plug#end()
+
+" REQUIRED: set your API key
 let g:codestats_api_key = 'YOUR_KEY_HERE'
+
+" optional: configure vim-airline to display status
+let g:airline_section_x = airline#section#create_right(['tagbar', 'filetype', '%{CodeStatsXp()}'])
 ```
 
-Get the API key from your [Code::Stats machine page](https://codestats.net/my/machines).
+### Advanced
 
-You may additionally set `g:codestats_api_url` to use another Code::Stats server.
+- `g:codestats_api_key` must be set to your API key
+- `g:codestats_api_url` may be set to use another Code::Stats server.
+- `g:codestats_error` contains an error message when there was an error. When a pulse is successfully sent, the error is cleared.
+- `CodeStatsXp()` returns current status as a string, eg. `C::S 57` for 57 unsent XP, or `C::S ERR` if there was an error
 
 ## Requirements
 
 - Vim >= 7.3.196 or NeoVim
-- Compiled with Python (2.6+ or 3) support
+- Python (2.6+ or 3) support
 
 Technical reasons: we use the `InsertCharPre` event in Vim and `multiprocessing` module in Python.
-
-## Tips
-
-Display pending XP in [vim-airline](https://github.com/vim-airline/vim-airline):
-
-```
-let g:airline_section_x = airline#section#create_right(['tagbar', 'filetype', '%{CodeStatsXp()}'])
-```
-
-If there was an error (eg. no network connection, invalid API key), `CodeStatsXp()` returns `C::S ERR`. An error message can be seen in `g:codestats_error`. When a pulse is successfully sent, the error is cleared.
 
 ## Hacking on `code-stats-vim`
 

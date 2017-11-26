@@ -18,16 +18,20 @@ del codestats_path
 
 
 class Codestats(object):
-    def __init__(self):
+    def __init__(self, urlopen=None):
         """Start a worker process"""
         from codestats_worker import Worker
+        worker = None
 
         API_KEY = vim.eval("g:codestats_api_key")
         BASE_URL = vim.eval("g:codestats_api_url")
         PULSE_URL = BASE_URL + "/api/my/pulses"
 
         self.pipe, worker_pipe = multiprocessing.Pipe()
-        worker = Worker(worker_pipe, API_KEY, PULSE_URL)
+        if urlopen is not None:
+            worker = Worker(worker_pipe, API_KEY, PULSE_URL, urlopen)
+        else:
+            worker = Worker(worker_pipe, API_KEY, PULSE_URL)
         self.process = multiprocessing.Process(target=worker.run)
         self.process.start()
 
@@ -65,9 +69,11 @@ class Codestats(object):
                         error.replace("'", "''"))
 
 
-# on :PlugUpdate, unload the old instance before setting up a new one
-if "codestats" in globals():
-    # assumption: refcount is zero after this
-    del codestats
+# don't run these if imported, eg. in tests
+if __name__ == '__main__':
+    # on :PlugUpdate, unload the old instance before setting up a new one
+    if "codestats" in globals():
+        # assumption: refcount is zero after this
+        del codestats
 
-codestats = Codestats()
+    codestats = Codestats()

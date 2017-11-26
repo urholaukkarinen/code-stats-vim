@@ -43,10 +43,11 @@ def get_payload(xps):
 class Worker(object):
     """Worker that communicates with the Code::Stats API"""
 
-    def __init__(self, pipe, api_key, pulse_url):
+    def __init__(self, pipe, api_key, pulse_url, urlopen=urlopen):
         self.pipe = pipe
         self.api_key = api_key
         self.pulse_url = pulse_url
+        self.urlopen = urlopen  # optional dependency injection
         self.xps = {}
 
     def get_headers(self):
@@ -65,7 +66,7 @@ class Worker(object):
                       headers=self.get_headers())
 
         try:
-            response = urlopen(req)
+            response = self.urlopen(req)
             response.read()
             # connection might not be closed without .read()
         except URLError as e:

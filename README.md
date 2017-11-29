@@ -22,16 +22,26 @@ call plug#begin('~/.vim/plugged')
 " ... your other plugins
 
 Plug 'https://gitlab.com/code-stats/code-stats-vim.git'
+
+" Optional: If you want a nice status line in Vim
 Plug 'vim-airline/vim-airline'
 
 call plug#end()
+```
 
+4. Run `:PlugUpdate` in Vim to install the new plugins.
+
+5. Add the following settings to the aforementioned file, after `call plug#end()`:
+
+```
 " REQUIRED: set your API key
 let g:codestats_api_key = 'YOUR_KEY_HERE'
 
-" optional: configure vim-airline to display status
+" Optional: configure vim-airline to display status
 let g:airline_section_x = airline#section#create_right(['tagbar', 'filetype', '%{CodeStatsXp()}'])
 ```
+
+7. Start Vim or reload configs and you should be done!
 
 ### Advanced
 

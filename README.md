@@ -11,11 +11,11 @@ Vim plugin that counts your keypresses and saves statistics to [Code::Stats](htt
 
 ### Easy mode: [vim-plug](https://github.com/junegunn/vim-plug) + [vim-airline](https://github.com/vim-airline/vim-airline)
 
-1. Get a Code::Stats account and copy your API key from the [Code::Stats machine page](https://codestats.net/my/machines).
+1) Get a Code::Stats account and copy your API key from the [Code::Stats machine page](https://codestats.net/my/machines).
 
-2. Install [vim-plug](https://github.com/junegunn/vim-plug) if you haven't already.
+2) Install [vim-plug](https://github.com/junegunn/vim-plug) if you haven't already.
 
-3. Add the following in your `.vimrc` or `init.vim` (or edit the existing plugin section).
+3) Add the following in your `.vimrc` or `init.vim` (or edit the existing plugin section).
 
 ```
 call plug#begin('~/.vim/plugged')
@@ -29,9 +29,9 @@ Plug 'vim-airline/vim-airline'
 call plug#end()
 ```
 
-4. Run `:PlugUpdate` in Vim to install the new plugins.
+4) Run `:PlugUpdate` in Vim to install the new plugins.
 
-5. Add the following settings to the aforementioned file, after `call plug#end()`:
+5) Add the following settings to the aforementioned file, after `call plug#end()`:
 
 ```
 " REQUIRED: set your API key
@@ -41,7 +41,7 @@ let g:codestats_api_key = 'YOUR_KEY_HERE'
 let g:airline_section_x = airline#section#create_right(['tagbar', 'filetype', '%{CodeStatsXp()}'])
 ```
 
-7. Start Vim or reload configs and you should be done!
+7) Start Vim or reload configs and you should be done!
 
 ### Advanced
 

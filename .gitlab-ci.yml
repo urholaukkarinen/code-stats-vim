@@ -19,5 +19,6 @@ test:vim:
   image: 'python:3.6-stretch'
   script:
   - apt-get update -qy && apt-get install -y vim-nox neovim
+  - pip install --upgrade neovim
   - ./run_vim_tests.sh
-  - VIM=nvim ./run_vim_tests.sh
+  - VIM_CMD=nvim ./run_vim_tests.sh

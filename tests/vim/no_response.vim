@@ -5,7 +5,6 @@ let g:codestats_api_key = "MOCK_API_KEY"
 let g:codestats_api_url = "http://codestats.invalid"
 runtime! plugin/codestats.vim
 
-edit tests/out/no_response
 set filetype=automatedtest
 put =CodeStatsXp()
 execute "normal! iHelo\<bs>lo world!\<cr>\<esc>"

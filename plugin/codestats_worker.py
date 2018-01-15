@@ -3,6 +3,7 @@
 from datetime import datetime, timedelta
 import json
 import time
+from ssl import CertificateError
 
 # Python 2 and 3 have different modules for urllib2
 try:
@@ -76,6 +77,9 @@ class Worker(object):
             except AttributeError:
                 # non-HTTP error, eg. no network
                 return (False, e.reason)
+        except CertificateError as e:
+            # SSL certificate error (eg. a public wifi redirects traffic)
+            return (False, e)
         return (True, None)
 
     def send_xp(self):

@@ -58,6 +58,9 @@ function! s:add_xp()
 endfunction
 
 function! s:log_xp()
+    if !exists('b:codestats_xp')
+        let b:codestats_xp = 0
+    endif
     execute s:python . ' codestats.log_xp("' .
             \ &filetype . '", ' .
             \ b:codestats_xp . ')'

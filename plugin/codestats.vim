@@ -39,36 +39,39 @@ else
 endif
 
 
-" Two XP counters.
+" Two XP counters:
+"   - global g:codestats_pending_xp
+"   - buffer-local b:codestats_xp (initialized when it's used)
 " On :PlugUpdate, we intentionally clear pending XP because the worker
 " process that was supposed to send it is already gone.
 " Buffer-local XP is kept and sent in the future.
 let g:codestats_pending_xp = 0      " global total of unsaved XP
-if !exists('b:codestats_xp')
-    let b:codestats_xp = 0          " buffer-local XP
-endif
 
 
 function! s:add_xp()
     " plugins trigger TextChanged (eg. vim-plug) for unmodifiable buffers
     if &modifiable
         let g:codestats_pending_xp += 1
-        let b:codestats_xp += 1
+        if exists('b:codestats_xp')
+            let b:codestats_xp += 1
+        else
+            let b:codestats_xp = 1
+        endif
     endif
 endfunction
 
 function! s:log_xp()
-    if !exists('b:codestats_xp')
-        let b:codestats_xp = 0
+    if exists('b:codestats_xp')
+        execute s:python . ' codestats.log_xp("' .
+                \ &filetype . '", ' .
+                \ b:codestats_xp . ')'
+
+        if !exists('s:timer')
+            " Vim compiled without timer support; need to make this call here
+            call codestats#check_xp(0)
+        endif
     endif
-    execute s:python . ' codestats.log_xp("' .
-            \ &filetype . '", ' .
-            \ b:codestats_xp . ')'
     let b:codestats_xp = 0
-    if !exists('s:timer')
-        " Vim compiled without timer support; need to make this call here
-        call codestats#check_xp(0)
-    endif
 endfunction
 
 function! s:exit()
@@ -97,9 +100,6 @@ endfunction
 " Handle Vim events
 augroup codestats
     autocmd!
-
-    " STARTUP
-    autocmd BufEnter * if !exists('b:codestats_xp') | let b:codestats_xp = 0 | endif
 
     " ADDING XP: Insert mode
     " Does not fire for newlines or backspaces,

@@ -7,7 +7,7 @@ test:python2:
 
 
 test:python3:
-  image: 'python:3.6-stretch'
+  image: 'python:3.7-stretch'
   coverage: '/^TOTAL +\d+ +\d+ +(\d+%)$/'
   script:
   - pip install -r requirements.txt

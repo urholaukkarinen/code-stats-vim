@@ -67,7 +67,7 @@ class Worker(object):
                       headers=self.get_headers())
 
         try:
-            response = self.urlopen(req)
+            response = self.urlopen(req, timeout=5)
             response.read()
             # connection might not be closed without .read()
         except URLError as e:

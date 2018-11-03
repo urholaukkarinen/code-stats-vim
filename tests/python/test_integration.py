@@ -27,7 +27,7 @@ def test_codestats_hot_reload():
 
 
 def test_log_and_check_xp():
-    def fake_urlopen(req):
+    def fake_urlopen(req, **args):
         return MockHttpResponse()
 
     from codestats import Codestats
@@ -44,7 +44,7 @@ def test_log_and_check_xp():
 
 
 def test_network_error():
-    def fail_urlopen(req):
+    def fail_urlopen(req, **args):
         try:
             from urllib.error import URLError
         except ImportError:

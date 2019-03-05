@@ -9,8 +9,10 @@ from ssl import CertificateError
 try:
     from urllib.request import Request, urlopen
     from urllib.error import URLError
+    from http.client import HTTPException
 except ImportError:
     from urllib2 import Request, urlopen, URLError
+    from httplib import HTTPException
 
 from codestats_version import __version__
 from codestats_filetypes import get_language_name
@@ -79,6 +81,12 @@ class Worker(object):
                 return (False, e.reason)
         except CertificateError as e:
             # SSL certificate error (eg. a public wifi redirects traffic)
+            return (False, e)
+        except HTTPException as e:
+            print("HTTPException on send data. Msg:",
+                  e.message,
+                  "\nDoc?:",
+                  e.__doc__)
             return (False, e)
         return (True, None)
 

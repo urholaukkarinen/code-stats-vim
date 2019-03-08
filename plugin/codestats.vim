@@ -3,6 +3,13 @@
 function! CodeStatsXp()
 endfunction
 
+" Check for MacVim
+if has('gui_macvim')
+    echomsg 'code-stats-vim does not support MacVim with Python 2.'
+    echomsg 'See https://gitlab.com/code-stats/code-stats-vim/issues/10'
+    finish
+endif
+
 " Check InsertCharPre support (Vim >= 7.3.186 in practice)
 if !exists('##InsertCharPre')
     echomsg 'code-stats-vim requires InsertCharPre support (Vim >= 7.3.186)!'

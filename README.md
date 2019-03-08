@@ -57,6 +57,8 @@ let g:airline_section_x = airline#section#create_right(['tagbar', 'filetype', '%
 
 Technical reasons: we use the `InsertCharPre` event in Vim and `multiprocessing` module in Python.
 
+**MacVim** is unfortunately [not supported](https://gitlab.com/code-stats/code-stats-vim/issues/10). Patches to add support are welcome.
+
 ## Hacking on `code-stats-vim`
 
 Point vim-plug to a local copy: `Plug '~/code-stats-vim'`. Edit. Run lint with `flake8` and tests with `pytest`.

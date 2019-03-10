@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys
 from datetime import datetime, timedelta
 import json
 import time
@@ -7,11 +8,11 @@ from ssl import CertificateError
 
 # Python 2 and 3 have different modules for urllib2
 try:
-    from urllib.request import Request, urlopen
+    from urllib.request import Request, urlopen, build_opener, ProxyHandler
     from urllib.error import URLError
     from http.client import HTTPException
 except ImportError:
-    from urllib2 import Request, urlopen, URLError
+    from urllib2 import Request, urlopen, URLError, build_opener, ProxyHandler
     from httplib import HTTPException
 
 from codestats_version import __version__
@@ -19,6 +20,14 @@ from codestats_filetypes import get_language_name
 from localtz import LOCAL_TZ
 
 SEND_INTERVAL = timedelta(seconds=10)
+
+# Getting proxies with multiprocessing is buggy on MacOS, so disable them
+# https://gitlab.com/code-stats/code-stats-vim/issues/8
+# https://bugs.python.org/issue30837
+if sys.platform == "darwin":
+    _urlopen = build_opener(ProxyHandler({})).open
+else:
+    _urlopen = urlopen
 
 
 def get_timestamp():
@@ -46,7 +55,7 @@ def get_payload(xps):
 class Worker(object):
     """Worker that communicates with the Code::Stats API"""
 
-    def __init__(self, pipe, api_key, pulse_url, urlopen=urlopen):
+    def __init__(self, pipe, api_key, pulse_url, urlopen=_urlopen):
         self.pipe = pipe
         self.api_key = api_key
         self.pulse_url = pulse_url

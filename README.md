@@ -59,9 +59,9 @@ Technical reasons: we use the `InsertCharPre` event in Vim and `multiprocessing`
 
 ## Caveats
 
-Proxies are not supported on MacOS, because checking for used proxies [is unstable with multiprocessing](https://bugs.python.org/issue30837). Please file a bug report if you really need proxy support and we'll consider the options.
-
-**MacVim** is unfortunately [not supported](https://gitlab.com/code-stats/code-stats-vim/issues/10). Patches to add support are welcome.
+- Windows is currently not supported (see issue #11). Pull requests are welcome.
+- Proxies are not supported on MacOS, because checking for used proxies [is unstable with multiprocessing](https://bugs.python.org/issue30837). Please file a bug report if you really need proxy support and we'll consider the options.
+- **MacVim** is unfortunately [not supported](https://gitlab.com/code-stats/code-stats-vim/issues/10). Patches to add support are welcome.
 
 ## Hacking on `code-stats-vim`
 

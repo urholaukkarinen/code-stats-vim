@@ -63,8 +63,8 @@ endfunction
 
 function! codestats#set_error(error)
 	if a:error == ''
-		if exists("g:vim_codestats_error")
-			unlet g:vim_codestats_error
+		if exists("g:codestats_error")
+			unlet g:codestats_error
 		endif
 	else
 		let g:codestats_error = error
@@ -82,7 +82,7 @@ augroup codestats
 augroup END
 
 function! CodeStatsXP()
-	if exists("g:vim_codestats_error")
+	if exists("g:codestats_error")
 		return "C::S ERR"
 	endif
 	return 'C::S ' . b:current_xp

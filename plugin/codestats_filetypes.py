@@ -675,4 +675,3 @@ filetype_map = {
     "z8a":                "z8a",
     "zimbu":              "zimbu",
 }
-

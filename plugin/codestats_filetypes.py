@@ -1,27 +1,18 @@
-# -*- coding: utf-8 -*-
-"""A mapping of Vim filetypes to human-readable ones"""
+# file to contain vim filetype mappings
+# to langauges for codestats
 
-
-def get_language_name(filetype):
-    """Return language name (human-readable) for a Vim filetype"""
-    if filetype in FILETYPE_MAP:
-        return FILETYPE_MAP[filetype]
-    return filetype
-
-
-# all the filetypes from Vim 8.0 + sheerun/vim-polyglot
-FILETYPE_MAP = {
+filetype_map = {
     "":                   "Plain text",
     "ada":                "Ada",
     "ansible":            "Ansible",
     "ansible_hosts":      "Ansible",
     "ansible_template":   "Ansible",
-    "c":                  "C",
+    "c":                  "C/C++",
     "cs":                 "C#",
     "clojure":            "Clojure",
     "cmake":              "CMake",
     "coffee":             "CoffeeScript",
-    "cpp":                "C++",
+    "cpp":                "C/C++",
     "css":                "CSS",
     "dart":               "Dart",
     "diff":               "Diff",
@@ -684,3 +675,4 @@ FILETYPE_MAP = {
     "z8a":                "z8a",
     "zimbu":              "zimbu",
 }
+

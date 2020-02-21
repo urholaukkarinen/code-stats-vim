@@ -1,9 +1,8 @@
 import datetime
 import json
-import os.path
 import sys
 import threading
-import time 
+import time
 import vim
 
 from ssl import CertificateError
@@ -22,13 +21,13 @@ except ImportError:
 codestats_path = vim.eval('s:codestats_path')
 if codestats_path not in sys.path:
     sys.path.append(codestats_path)
-    
-from codestats_filetypes import filetype_map
-from localtz import LOCAL_TZ
+
+from codestats_filetypes import filetype_map    # noqa: E402
+from localtz import LOCAL_TZ                    # noqa: E402
 
 # globals
 INTERVAL = 10                # interval at which stats are sent
-SLEEP_INTERVAL = 0.1         # sleep interval so that we can basically timeslice to see if we need to exit
+SLEEP_INTERVAL = 0.1         # sleep interval for timeslicing
 VERSION = '1.0.0'            # versioning
 TIMEOUT = 2                  # request timeout value (in seconds)
 
@@ -40,13 +39,14 @@ if sys.platform == "darwin":
 else:
     _urlopen = urlopen
 
+
 class CodeStats():
     def __init__(self, xp_dict):
-        self.xp_dict = xp_dict 
+        self.xp_dict = xp_dict
         self.sem = threading.Semaphore()
 
         # start the main thread
-        self.cs_thread = threading.Thread(target = self.main_thread, args = ())
+        self.cs_thread = threading.Thread(target=self.main_thread, args=())
         self.cs_thread.daemon = True
         self.cs_thread.start()
 
@@ -57,28 +57,28 @@ class CodeStats():
             return
 
         # insert the filetype into the dictionary.  Just try
-        # and acquire the lock and if we can we can try again 
+        # and acquire the lock and if we can we can try again
         # later
-        if self.sem.acquire(blocking = False) == True:
+        if self.sem.acquire(blocking=False) is True:
             count = self.xp_dict.setdefault(language_type, 0)
             self.xp_dict[language_type] = count + xp
             self.sem.release()
 
-    def send_xp(self, exiting = False):
+    def send_xp(self, exiting=False):
         if len(self.xp_dict) == 0:
             return
 
         # acquire the lock to get the list of xp to send
         self.sem.acquire()
-        xp_list = [ dict(language=ft, xp=xp) for ft,xp in self.xp_dict.items() ]
-        self.xp_dict = { }
+        xp_list = [dict(language=ft, xp=xp) for ft, xp in self.xp_dict.items()]
+        self.xp_dict = {}
         self.sem.release()
 
         url = vim.eval("g:codestats_api_url")
         if url is None:
             return
 
-        if url.endswith('/') == False:
+        if url.endswith('/') is False:
             url = url + '/'
         url = url + 'api/my/pulses'
         machine_key = vim.eval("g:codestats_api_key")
@@ -90,9 +90,15 @@ class CodeStats():
         }
 
         # after lock is released we can send the payload
-        utc_now = datetime.datetime.now().replace(microsecond = 0, tzinfo = LOCAL_TZ).isoformat()
-        pulse_json = json.dumps({"coded_at":'{0}'.format(utc_now), "xps": xp_list}).encode('utf-8')
-        req = Request(url=url, data = pulse_json, headers = headers)
+        utc_now = datetime.datetime.now().replace(
+                microsecond=0,
+                tzinfo=LOCAL_TZ).isoformat()
+        pulse_json = json.dumps(
+                {
+                    "coded_at": '{0}'.format(utc_now),
+                    "xps": xp_list
+                }).encode('utf-8')
+        req = Request(url=url, data=pulse_json, headers=headers)
         error = ''
         try:
             response = _urlopen(req, timeout=5)
@@ -109,12 +115,12 @@ class CodeStats():
             # SSL certificate error (eg. a public wifi redirects traffic)
             error = e
         except HTTPException as e:
-            error = 'HTTPException on send data. Msg: {0}\nDoc?:{1}'.format(e.message, e.__doc__)
-        
-        # hacky way to get around exiting and not needing to set the error
-        if exiting is False and error is not '':
-            vim.command('call codestats#set_error({0})'.format(error))
+            error = 'HTTPException on send data. Msg: {0}\nDoc?:{1}'.format(
+                e.message, e.__doc__)
 
+        # hacky way to get around exiting and not needing to set the error
+        if exiting is False and error != '':
+            vim.command('call codestats#set_error({0})'.format(error))
 
     # main thread, needs to be able to send XP at an interval
     # and also be able to stop when vim is exited without
@@ -124,12 +130,13 @@ class CodeStats():
             cur_time = 0
             while cur_time < INTERVAL:
                 time.sleep(SLEEP_INTERVAL)
-                cur_time += SLEEP_INTERVAL 
+                cur_time += SLEEP_INTERVAL
 
             self.send_xp()
 
     def exit(self):
-        self.send_xp(exiting = True)
+        self.send_xp(exiting=True)
+
 
 # plugin startup.  Need to allow for vimrc getting reloaded and
 # this module getting restarted, potentially with pending xp
@@ -137,7 +144,7 @@ if __name__ == "__main__":
     xp_dict = {}
     # allow reentrancy
     if 'codestats' in globals():
-        xp_dict = codestats.xp_dict
+        xp_dict = codestats.xp_dict    # noqa: F821
         del(codestats)
 
     codestats = CodeStats(xp_dict)

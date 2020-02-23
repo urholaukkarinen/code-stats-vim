@@ -4,7 +4,7 @@
 
 " define external function to do nothign
 " in case module doesn't initialize properly
-function! CodeStatsXP()
+function! CodeStatsXp()
 	return 'C::S Not Initialized'
 endfunction
 
@@ -81,7 +81,7 @@ augroup codestats
 	autocmd BufEnter * call s:enter_buf()
 augroup END
 
-function! CodeStatsXP()
+function! CodeStatsXp()
 	if exists("g:codestats_error")
 		return "C::S ERR"
 	endif

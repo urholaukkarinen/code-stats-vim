@@ -56,13 +56,12 @@ class CodeStats():
         if language_type is None or xp == 0:
             return
 
-        # insert the filetype into the dictionary.  Just try
-        # and acquire the lock and if we can we can try again
-        # later
-        if self.sem.acquire(blocking=False) is True:
-            count = self.xp_dict.setdefault(language_type, 0)
-            self.xp_dict[language_type] = count + xp
-            self.sem.release()
+        # insert the filetype into the dictionary.  Sem sections
+        # are super small so this should be quick if it blocks
+        self.sem.acquire()
+        count = self.xp_dict.setdefault(language_type, 0)
+        self.xp_dict[language_type] = count + xp
+        self.sem.release()
 
     def send_xp(self, exiting=False):
         if len(self.xp_dict) == 0:

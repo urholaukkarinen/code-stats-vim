@@ -50,6 +50,7 @@ endfunction
 
 " local function to exit (which will send any remaining xp)
 function! s:exit()
+	call s:send_xp()
 	execute s:python . ' codestats.exit()'
 endfunction
 

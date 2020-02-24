@@ -1,0 +1,30 @@
+" NOTE: this file should NOT have the extension .vim because those are loaded
+" by default in many plugin managers.
+
+" UNLOAD code-stats-vim versions 0.3.0 - 0.6.0
+
+" Stop timer
+if exists('s:timer')
+    call timer_stop(s:timer)
+endif
+
+" Remove autocmds and the augroup to stop automatically running code
+augroup codestats
+    autocmd!
+augroup END
+augroup! codestats
+
+
+" Delete all defined functions except CodeStatsXp
+delfunction! s:add_xp
+delfunction! s:log_xp
+delfunction! s:exit
+delfunction! s:xp_was_sent
+delfunction! codestats#check_xp
+
+" Stop the running python code
+if has('python3')
+    python3 'del codestats'
+elseif has('python')
+    python 'del codestats'
+endif

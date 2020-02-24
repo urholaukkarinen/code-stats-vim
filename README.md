@@ -55,13 +55,7 @@ let g:airline_section_x = airline#section#create_right(['tagbar', 'filetype', '%
 - Vim >= 7.3.196 or NeoVim
 - Python (2.6+ or 3) support
 
-Technical reasons: we use the `InsertCharPre` event in Vim and `multiprocessing` module in Python.
-
-## Caveats
-
-- Windows is currently not supported (see issue #11). Pull requests are welcome.
-- Proxies are not supported on MacOS, because checking for used proxies [is unstable with multiprocessing](https://bugs.python.org/issue30837). Please file a bug report if you really need proxy support and we'll consider the options.
-- **MacVim** is unfortunately [not supported](https://gitlab.com/code-stats/code-stats-vim/issues/10). Patches to add support are welcome.
+Technical reasons: we use the `InsertCharPre` event in Vim.
 
 ## Hacking on `code-stats-vim`
 

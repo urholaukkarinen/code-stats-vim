@@ -11,6 +11,12 @@ endfunction
 " get the module path where the python file is located
 let s:codestats_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
+" check if the old <= 0.6.0 codebase is loaded (ie. upgrading to >= 1.0.0)
+if exists("g:codestats_pending_xp")
+  source s:codestats_path . "/old_version.unload"
+endif
+
+
 " check for python 3.  Right now that is what is supported
 if !has('python3')
 	if !has('python')

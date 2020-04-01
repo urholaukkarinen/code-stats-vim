@@ -45,7 +45,7 @@ endif
 
 " function to send xp - done on buffer write
 function! s:send_xp()
-	execute s:python . ' codestats.add_xp("' . &filetype . '", ' . b:current_xp ')'
+	execute s:python . ' codestats.add_xp("' . &filetype . '", ' . b:current_xp . ')'
 	let b:current_xp = 0
 endfunction
 
@@ -74,7 +74,7 @@ function! codestats#set_error(error)
 			unlet g:codestats_error
 		endif
 	else
-		let g:codestats_error = error
+		let g:codestats_error = a:error
 	endif
 endfunction
 

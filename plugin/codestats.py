@@ -42,14 +42,6 @@ SLEEP_INTERVAL = 0.1         # sleep interval for timeslicing
 VERSION = '1.0.0'            # versioning
 TIMEOUT = 2                  # request timeout value (in seconds)
 
-# Getting proxies with multiprocessing is buggy on MacOS, so disable them
-# https://gitlab.com/code-stats/code-stats-vim/issues/8
-# https://bugs.python.org/issue30837
-if sys.platform == "darwin":
-    _urlopen = build_opener(ProxyHandler({})).open
-else:
-    _urlopen = urlopen
-
 
 class CodeStats():
     def __init__(self, xp_dict, base_url, api_key):
@@ -106,7 +98,7 @@ class CodeStats():
         req = Request(url=self.pulse_url, data=pulse_json, headers=headers)
         error = ''
         try:
-            response = _urlopen(req, timeout=5)
+            response = urlopen(req, timeout=5)
             response.read()
             # connection might not be closed without .read()
         except URLError as e:

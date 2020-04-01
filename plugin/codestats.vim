@@ -26,10 +26,12 @@ if !has('python3')
 	let s:python = 'python'
 
 	" load up the python file
+	execute s:python . ' codestats_path = "' . s:codestats_path . '"'
 	execute 'pyfile ' . s:codestats_path . '/codestats.py'
 else
 	let s:python = 'python3'
 	" load up the python file
+	execute s:python . ' codestats_path = "' . s:codestats_path . '"'
 	execute 'py3file ' . s:codestats_path . '/codestats.py'
 endif
 
@@ -94,3 +96,6 @@ function! CodeStatsXp()
 	endif
 	return 'C::S ' . b:current_xp
 endfunction
+
+" Python code startup
+execute s:python . ' init_codestats("' . g:codestats_api_url . '", "' . g:codestats_api_key . '")'

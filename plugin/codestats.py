@@ -11,14 +11,25 @@ from ssl import CertificateError
 try:
     from urllib.request import Request, urlopen, build_opener, ProxyHandler
     from urllib.error import URLError
+    from urllib.parse import urljoin
     from http.client import HTTPException
 except ImportError:
     from urllib2 import Request, urlopen, URLError, build_opener, ProxyHandler
+    from urlparse import urljoin
     from httplib import HTTPException
+
+# Vim has thread-safe Python, Neovim does not; feature detect and provide a wrapper
+# see https://gitlab.com/code-stats/code-stats-vim/-/issues/14
+try:
+    _async_call = vim.async_call
+except AttributeError:
+    def _async_call(f, *args, **kwargs):
+        f(*args, **kwargs)
+
 
 # because of vim, we need to get the current folder
 # into the path to load other modules
-codestats_path = vim.eval('s:codestats_path')
+# NOTE: codestats_path has been set in .vim before loading this file
 if codestats_path not in sys.path:
     sys.path.append(codestats_path)
 
@@ -41,8 +52,11 @@ else:
 
 
 class CodeStats():
-    def __init__(self, xp_dict):
+    def __init__(self, xp_dict, base_url, api_key):
         self.xp_dict = xp_dict
+        self.pulse_url = urljoin(base_url, 'api/my/pulses')
+        self.api_key = api_key
+
         self.sem = threading.Semaphore()
 
         # start the main thread
@@ -73,18 +87,10 @@ class CodeStats():
         self.xp_dict = {}
         self.sem.release()
 
-        url = vim.eval("g:codestats_api_url")
-        if url is None:
-            return
-
-        if url.endswith('/') is False:
-            url = url + '/'
-        url = url + 'api/my/pulses'
-        machine_key = vim.eval("g:codestats_api_key")
         headers = {
             'Content-Type': 'application/json',
             'User-Agent': 'vim_codestats/{0}'.format(VERSION),
-            'X-API-Token': machine_key,
+            'X-API-Token': self.api_key,
             'Accept': '*/*'
         }
 
@@ -97,7 +103,7 @@ class CodeStats():
                     "coded_at": '{0}'.format(utc_now),
                     "xps": xp_list
                 }).encode('utf-8')
-        req = Request(url=url, data=pulse_json, headers=headers)
+        req = Request(url=self.pulse_url, data=pulse_json, headers=headers)
         error = ''
         try:
             response = _urlopen(req, timeout=5)
@@ -119,7 +125,11 @@ class CodeStats():
 
         # hacky way to get around exiting and not needing to set the error
         if exiting is False and error != '':
-            vim.command('call codestats#set_error({0})'.format(error))
+            _async_call(
+                vim.command,
+                'call codestats#set_error("{0}")'.format(error.replace('"', '\\"'))
+            )
+
 
     # main thread, needs to be able to send XP at an interval
     # and also be able to stop when vim is exited without
@@ -139,11 +149,13 @@ class CodeStats():
 
 # plugin startup.  Need to allow for vimrc getting reloaded and
 # this module getting restarted, potentially with pending xp
-if __name__ == "__main__":
+def init_codestats(base_url, api_key):
+    global codestats
+
     xp_dict = {}
     # allow reentrancy
     if 'codestats' in globals():
         xp_dict = codestats.xp_dict    # noqa: F821
         del(codestats)
 
-    codestats = CodeStats(xp_dict)
+    codestats = CodeStats(xp_dict, base_url, api_key)

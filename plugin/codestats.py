@@ -9,16 +9,16 @@ from ssl import CertificateError
 
 # Python 2 and 3 have different modules for urllib2
 try:
-    from urllib.request import Request, urlopen, build_opener, ProxyHandler
+    from urllib.request import Request, urlopen
     from urllib.error import URLError
     from urllib.parse import urljoin
     from http.client import HTTPException
 except ImportError:
-    from urllib2 import Request, urlopen, URLError, build_opener, ProxyHandler
+    from urllib2 import Request, urlopen, URLError
     from urlparse import urljoin
     from httplib import HTTPException
 
-# Vim has thread-safe Python, Neovim does not; feature detect and provide a wrapper
+# Vim has thread-safe Python, Neovim does not; feature detect and wrap
 # see https://gitlab.com/code-stats/code-stats-vim/-/issues/14
 try:
     _async_call = vim.async_call
@@ -30,11 +30,11 @@ except AttributeError:
 # because of vim, we need to get the current folder
 # into the path to load other modules
 # NOTE: codestats_path has been set in .vim before loading this file
-if codestats_path not in sys.path:
-    sys.path.append(codestats_path)
+if codestats_path not in sys.path:              # noqa: F821
+    sys.path.append(codestats_path)             # noqa: F821
 
-from codestats_filetypes import filetype_map    # noqa: E402
-from localtz import LOCAL_TZ                    # noqa: E402
+from codestats_filetypes import filetype_map
+from localtz import LOCAL_TZ
 
 # globals
 INTERVAL = 10                # interval at which stats are sent
@@ -124,11 +124,12 @@ class CodeStats():
                     str(error).replace('"', '\\"'))
             )
 
-
-    # main thread, needs to be able to send XP at an interval
-    # and also be able to stop when vim is exited without
-    # pausing until the interval is done
     def main_thread(self):
+        """Main thread
+
+        Needs to be able to send XP at an interval and also be able to stop
+        when vim is exited without pausing until the interval is done.
+        """
         while True:
             cur_time = 0
             while cur_time < INTERVAL:

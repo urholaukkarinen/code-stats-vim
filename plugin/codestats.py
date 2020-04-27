@@ -120,7 +120,8 @@ class CodeStats():
         if exiting is False and error != '':
             _async_call(
                 vim.command,
-                'call codestats#set_error("{0}")'.format(error.replace('"', '\\"'))
+                'call codestats#set_error("{0}")'.format(
+                    str(error).replace('"', '\\"'))
             )
 
 

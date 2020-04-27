@@ -82,7 +82,7 @@ class CodeStats():
 
         headers = {
             'Content-Type': 'application/json',
-            'User-Agent': 'vim_codestats/{0}'.format(VERSION),
+            'User-Agent': 'code-stats-vim/{0}'.format(VERSION),
             'X-API-Token': self.api_key,
             'Accept': '*/*'
         }

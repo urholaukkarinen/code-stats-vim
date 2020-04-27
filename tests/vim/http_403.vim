@@ -9,6 +9,7 @@ set filetype=automatedtest
 put =CodeStatsXp()
 execute "normal! iHelo\<bs>lo world!\<cr>\<esc>"
 put =CodeStatsXp()
+call codestats#force_send_xp()
 sleep 1
 put =CodeStatsXp()
 put =g:codestats_error

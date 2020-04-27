@@ -80,6 +80,12 @@ function! codestats#set_error(error)
 	endif
 endfunction
 
+" Send XP NOW. Used for integation tests.
+function! codestats#force_send_xp()
+	call s:flush_xp()
+	execute s:python . ' codestats.send_xp()'
+endfunction
+
 " autocommands to keep track of code stats
 augroup codestats
     autocmd!

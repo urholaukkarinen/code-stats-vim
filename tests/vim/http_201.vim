@@ -9,7 +9,7 @@ set filetype=automatedtest
 put =CodeStatsXp()
 execute "normal! iHelo\<bs>lo world!\<cr>\<esc>"
 put =CodeStatsXp()
-sleep 1
+call codestats#force_send_xp()
 put =CodeStatsXp()
 write
 quit

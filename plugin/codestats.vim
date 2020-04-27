@@ -97,5 +97,8 @@ function! CodeStatsXp()
 	return 'C::S ' . b:current_xp
 endfunction
 
+" initialize
+call s:enter_buf()
+
 " Python code startup
 execute s:python . ' init_codestats("' . g:codestats_api_url . '", "' . g:codestats_api_key . '")'

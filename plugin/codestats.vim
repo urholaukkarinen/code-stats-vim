@@ -45,8 +45,8 @@ if !exists("g:codestats_api_key")
 	let g:codestats_api_key = ''
 endif
 
-" function to send xp - done on buffer write
-function! s:send_xp()
+" function to transfer XP over to Python - done on buffer write
+function! s:flush_xp()
 	execute s:python . ' codestats.add_xp("' . &filetype . '", ' . b:current_xp . ')'
 	let b:current_xp = 0
 endfunction
@@ -58,7 +58,7 @@ endfunction
 
 " local function to exit (which will send any remaining xp)
 function! s:exit()
-	call s:send_xp()
+	call s:flush_xp()
 	execute s:python . ' codestats.exit()'
 endfunction
 
@@ -86,7 +86,7 @@ augroup codestats
 	autocmd InsertCharPre * call s:add_xp()
     autocmd TextChanged * call s:add_xp()
     autocmd VimLeavePre * call s:exit()
-	autocmd BufWrite * call s:send_xp()
+	autocmd BufWrite * call s:flush_xp()
 	autocmd BufEnter * call s:enter_buf()
 augroup END
 

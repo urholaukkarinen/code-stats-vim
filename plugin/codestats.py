@@ -57,10 +57,11 @@ class CodeStats():
         self.cs_thread.start()
 
     def add_xp(self, filetype, xp):
-        # get the langauge type based on what vim passed to us
-        language_type = filetype_map.get(filetype, None)
-        if language_type is None or xp == 0:
+        if xp == 0:
             return
+
+        # get the langauge type based on what vim passed to us
+        language_type = filetype_map.get(filetype, filetype)
 
         # insert the filetype into the dictionary.  Sem sections
         # are super small so this should be quick if it blocks

@@ -39,7 +39,7 @@ from localtz import LOCAL_TZ
 # globals
 INTERVAL = 10                # interval at which stats are sent
 SLEEP_INTERVAL = 0.1         # sleep interval for timeslicing
-VERSION = '1.0.0'            # versioning
+VERSION = '1.1.0'            # versioning
 TIMEOUT = 2                  # request timeout value (in seconds)
 
 

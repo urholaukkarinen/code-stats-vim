@@ -47,12 +47,17 @@ endif
 
 " function to transfer XP over to Python - done on buffer write
 function! s:flush_xp()
-	execute s:python . ' codestats.add_xp("' . &filetype . '", ' . b:current_xp . ')'
+	if exists("b:current_xp")
+		execute s:python . ' codestats.add_xp("' . &filetype . '", ' . b:current_xp . ')'
+	endif
 	let b:current_xp = 0
 endfunction
 
 " local function to add xp
 function! s:add_xp()
+	if !exists("b:current_xp")
+		let b:current_xp = 0
+	endif
 	let b:current_xp += 1
 endfunction
 
@@ -60,14 +65,6 @@ endfunction
 function! s:exit()
 	call s:flush_xp()
 	execute s:python . ' codestats.exit()'
-endfunction
-
-" set xp to 0 when entering any buffer if
-" it's not already set
-function! s:enter_buf()
-	if !exists("b:current_xp")
-		let b:current_xp = 0
-	endif
 endfunction
 
 function! codestats#set_error(error)
@@ -93,18 +90,18 @@ augroup codestats
     autocmd TextChanged * call s:add_xp()
     autocmd VimLeavePre * call s:exit()
 	autocmd BufWrite * call s:flush_xp()
-	autocmd BufEnter * call s:enter_buf()
 augroup END
 
 function! CodeStatsXp()
 	if exists("g:codestats_error")
 		return "C::S ERR"
 	endif
+	if !exists("b:current_xp")
+		let b:current_xp = 0
+	endif
 	return 'C::S ' . b:current_xp
 endfunction
 
-" initialize
-call s:enter_buf()
 
 " Python code startup
 execute s:python . ' init_codestats("' . g:codestats_api_url . '", "' . g:codestats_api_key . '")'

@@ -17,7 +17,6 @@ if exists("g:codestats_pending_xp")
 endif
 
 
-" check for python 3.  Right now that is what is supported
 if !has('python3')
     if !has('python')
         echomsg 'Python2/3 support required for vim-codestats'
@@ -26,13 +25,11 @@ if !has('python3')
     let s:python = 'python'
 
     " load up the python file
-    execute s:python . ' codestats_path = "' . s:codestats_path . '"'
-    execute 'pyfile ' . s:codestats_path . '/codestats.py'
+    execute 'pyfile ' . s:codestats_path . '/init_codestats.py'
 else
     let s:python = 'python3'
     " load up the python file
-    execute s:python . ' codestats_path = "' . s:codestats_path . '"'
-    execute 'py3file ' . s:codestats_path . '/codestats.py'
+    execute 'py3file ' . s:codestats_path . '/init_codestats.py'
 endif
 
 " check for variables that are needed and only

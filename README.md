@@ -52,10 +52,8 @@ let g:airline_section_x = airline#section#create_right(['tagbar', 'filetype', '%
 
 ## Requirements
 
-- Vim >= 7.3.196 or NeoVim
+- Vim >= 7.3.1163 or NeoVim
 - Python (2.6+ or 3) support
-
-Technical reasons: we use the `InsertCharPre` event in Vim.
 
 ## Hacking on `code-stats-vim`
 

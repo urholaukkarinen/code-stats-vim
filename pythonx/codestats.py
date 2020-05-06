@@ -1,6 +1,5 @@
 import datetime
 import json
-import sys
 import threading
 import time
 import vim
@@ -26,20 +25,13 @@ except AttributeError:
     def _async_call(f, *args, **kwargs):
         f(*args, **kwargs)
 
-
-# because of vim, we need to get the current folder
-# into the path to load other modules
-# NOTE: codestats_path has been set in .vim before loading this file
-if codestats_path not in sys.path:              # noqa: F821
-    sys.path.append(codestats_path)             # noqa: F821
-
 from codestats_filetypes import filetype_map
 from localtz import LOCAL_TZ
 
 # globals
 INTERVAL = 10                # interval at which stats are sent
 SLEEP_INTERVAL = 0.1         # sleep interval for timeslicing
-VERSION = '1.1.2'            # versioning
+VERSION = '1.2.0'            # versioning
 TIMEOUT = 2                  # request timeout value (in seconds)
 
 
@@ -140,17 +132,3 @@ class CodeStats():
 
     def exit(self):
         self.send_xp(exiting=True)
-
-
-# plugin startup.  Need to allow for vimrc getting reloaded and
-# this module getting restarted, potentially with pending xp
-def init_codestats(base_url, api_key):
-    global codestats
-
-    xp_dict = {}
-    # allow reentrancy
-    if 'codestats' in globals():
-        xp_dict = codestats.xp_dict    # noqa: F821
-        del(codestats)
-
-    codestats = CodeStats(xp_dict, base_url, api_key)

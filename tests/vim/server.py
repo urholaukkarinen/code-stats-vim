@@ -17,7 +17,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         return
 
     def assert_valid_request_headers(self):
-        assert re.match('code-stats-vim/\d+\.\d+\.\d+(-.*)?',
+        assert re.match(r'code-stats-vim/\d+\.\d+\.\d+(-.*)?',
                         self.headers['user-agent'])
         assert self.headers['X-Api-Token'] == 'MOCK_API_KEY'
 

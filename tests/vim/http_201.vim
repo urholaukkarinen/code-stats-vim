@@ -2,7 +2,7 @@ set nocompatible
 
 " load the plugin manually
 let g:codestats_api_key = "MOCK_API_KEY"
-let g:codestats_api_url = "http://localhost:38080"
+let g:codestats_api_url = "http://localhost:38080/201/"
 runtime! plugin/codestats.vim
 
 set filetype=automatedtest
@@ -11,5 +11,6 @@ execute "normal! iHelo\<bs>lo world!\<cr>\<esc>"
 put =CodeStatsXp()
 call codestats#force_send_xp()
 put =CodeStatsXp()
-write
+
+write tests/out/http_201
 quit

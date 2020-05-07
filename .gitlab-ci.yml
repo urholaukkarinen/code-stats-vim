@@ -22,3 +22,4 @@ test:vim:
   - pip install --upgrade neovim
   - ./run_vim_tests.sh
   - VIM_CMD=nvim ./run_vim_tests.sh
+  - ./stop_server.sh

@@ -2,7 +2,7 @@ set nocompatible
 
 " load the plugin manually
 let g:codestats_api_key = "MOCK_API_KEY"
-let g:codestats_api_url = "http://localhost:38080"
+let g:codestats_api_url = "http://localhost:38080/403/"
 runtime! plugin/codestats.vim
 
 set filetype=automatedtest
@@ -14,5 +14,5 @@ sleep 1
 put =CodeStatsXp()
 put =g:codestats_error
 
-write
+write tests/out/http_403
 quit

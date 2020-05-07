@@ -17,5 +17,5 @@ put =g:codestats_error
 " different libc implementations cause different messages for same error; normalize
 %substitute/^\[Errno -2\] Name or service not known$/[Errno 8] nodename nor servname provided, or not known/eg
 
-write
+write tests/out/no_response
 quit

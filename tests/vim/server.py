@@ -41,7 +41,12 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         # respond in any case
-        self.send_response(self.code)
+        # if url is /123/api/... respond with 123
+        try:
+            code = int(self.path[1:4])
+        except ValueError:
+            code = self.code
+        self.send_response(code)
         self.end_headers()
         self.wfile.write(b"Response message from test_server.py")
 
@@ -50,20 +55,11 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.assert_valid_request_body()
 
 
-def run(_code=200):
-    class HttpCodeHandler(RequestHandler):
-        code = _code
-
+def run():
     server_address = ('', 38080)
-    httpd = HTTPServer(server_address, HttpCodeHandler)
-    # only handle one request
-    httpd.handle_request()
+    with HTTPServer(server_address, RequestHandler) as httpd:
+        httpd.serve_forever()
 
 
 if __name__ == "__main__":
-    from sys import argv
-
-    if len(argv) == 2:
-        run(int(argv[1]))
-    else:
-        run()
+    run()

@@ -7,6 +7,13 @@ Vim plugin that counts your keypresses and saves statistics to [Code::Stats](htt
 
 ![Screen capture of code-stats-vim logging and sending XP](https://thumbs.gfycat.com/HastyAnxiousBlackfootedferret-size_restricted.gif)
 
+## Requirements
+
+- Vim >= 7.3.1163 or NeoVim
+- Python (2.6+ or 3) support
+
+**NOTE:** The version of Vim in **macOS Monterey** (and probably later) is not built with Python support. You will need to install Neovim or Vim yourself to use code-stats-vim.
+
 ## Installation
 
 ### Easy mode: [vim-plug](https://github.com/junegunn/vim-plug) + [vim-airline](https://github.com/vim-airline/vim-airline)
@@ -49,11 +56,6 @@ let g:airline_section_x = airline#section#create_right(['tagbar', 'filetype', '%
 - `g:codestats_api_url` may be set to use another Code::Stats server.
 - `g:codestats_error` contains an error message when there was an error. When a pulse is successfully sent, the error is cleared.
 - `CodeStatsXp()` returns current status as a string, eg. `C::S 57` for 57 unsent XP, or `C::S ERR` if there was an error
-
-## Requirements
-
-- Vim >= 7.3.1163 or NeoVim
-- Python (2.6+ or 3) support
 
 ## Hacking on `code-stats-vim`
 

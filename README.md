@@ -1,7 +1,5 @@
-[![Build status](https://gitlab.com/code-stats/code-stats-vim/badges/master/build.svg)](https://gitlab.com/code-stats/code-stats-vim/pipelines)
-[![Python 3 test coverage](https://gitlab.com/code-stats/code-stats-vim/badges/master/coverage.svg)](https://gitlab.com/code-stats/code-stats-vim/-/jobs/)
-
 # [Code::Stats](https://codestats.net) plugin for Vim
+## Fork of https://gitlab.com/code-stats/code-stats-vim
 
 Vim plugin that counts your keypresses and saves statistics to [Code::Stats](https://codestats.net), a free stats tracking service for programmers.
 
